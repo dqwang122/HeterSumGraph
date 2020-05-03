@@ -32,7 +32,7 @@ For **CNN/DailyMail** and **Multi-News**, we also provide the json-format datase
 
 The example looks like this:
 
-```json
+```
 {
   "text":["deborah fuller has been banned from keeping animals ... 30mph",...,"a dog breeder and exhibitor... her dogs confiscated"],
   "summary":["warning : ... at a speed of around 30mph",... ,"she was banned from ... and given a curfew "],
