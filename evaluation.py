@@ -37,6 +37,7 @@ from model.HiGraph import HSumGraph, HSumDocGraph
 
 
 def load_test_model(model, model_name, eval_dir, save_root, gpu):
+    """ choose which model will be loaded for evaluation """
     if model_name.startswith('eval'):
         bestmodel_load_path = os.path.join(eval_dir, model_name[4:])
     elif model_name.startswith('train'):
@@ -67,7 +68,6 @@ def load_test_model(model, model_name, eval_dir, save_root, gpu):
 
 
 def run_test(model, dataset, loader, model_name, hps):
-    """Repeatedly runs eval iterations, logging to screen and writing summaries. Saves the model with the best loss seen so far."""
     test_dir = os.path.join(hps.save_root, "test") # make a subdir of the root dir for eval data
     eval_dir = os.path.join(hps.save_root, "eval")
     if not os.path.exists(test_dir) : os.makedirs(test_dir)
@@ -77,7 +77,7 @@ def run_test(model, dataset, loader, model_name, hps):
 
     resfile = None
     if hps.save_label:
-        log_dir = os.path.join(test_dir, hps.data_path.split("/")[-1])
+        log_dir = os.path.join(test_dir, hps.cache_dir.split("/")[-1])
         resfile = open(log_dir, "w")
         logger.info("[INFO] Write the Evaluation into %s", log_dir)
 
@@ -247,10 +247,6 @@ def main():
     if hps.test_model == "multi":
         for i in range(3):
             model_name = "evalbestmodel_%d" % i
-            run_test(model, dataset, loader, model_name, hps)
-    elif hps.test_model == "multiF":
-        for i in range(3):
-            model_name = "evalbestFmodel_%d" % i
             run_test(model, dataset, loader, model_name, hps)
     else:
         run_test(model, dataset, loader, hps.test_model, hps)

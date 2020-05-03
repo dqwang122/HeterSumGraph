@@ -2,12 +2,16 @@
 
 Code for ACL 2020 paper: [Heterogeneous Graph Neural Networks for Extractive Document Summarization](<https://arxiv.org/abs/2004.12393>)
 
-Some code are borrowed from [Transformer](https://github.com/jadore801120/attention-is-all-you-need-pytorch). Thanks for their work.
+[fastNLP](https://github.com/fastnlp/fastNLP) version will come soon.
 
-## Dependencies 
+Some code are borrowed from [PG](https://github.com/abisee/pointer-generator) and [Transformer](https://github.com/jadore801120/attention-is-all-you-need-pytorch). Thanks for their work.
+
+
+
+## Dependency 
 
 - python 3.5+
-- [PyTorch](https://pytorch.org/) 1.0
+- [PyTorch](https://pytorch.org/) 1.0+
 - [DGL](http://dgl.ai) 0.4
 - [rouge](https://github.com/pltrdy/rouge) 1.0.0
   - A full Python Implementation of the ROUGE Metric which is used in validation phrase
@@ -22,7 +26,7 @@ Some code are borrowed from [Transformer](https://github.com/jadore801120/attent
 
 ## Data
 
-We have preprocessed **CNN/DailyMail**, **NYT50** and **Multi-News** datasets for the TF-IDF features used in the graph creation, which you can find [here](https://drive.google.com/open?id=1oIYBwmrB9_alzvNDBtsMENKHthE9SW9z).
+We have preprocessed **CNN/DailyMail**, **NYT50** and **Multi-News** datasets for TF-IDF features used in the graph creation, which you can find [here](https://drive.google.com/open?id=1oIYBwmrB9_alzvNDBtsMENKHthE9SW9z).
 
 For **CNN/DailyMail** and **Multi-News**, we also provide the json-format datasets in [this link](https://drive.google.com/open?id=1JW033KefyyoYUKUFj6GqeBFZSHjksTfr).  However, due to the license, NYT(The New York Times Annotated Corpus) can only be available from [LDC](https://catalog.ldc.upenn.edu/LDC2008T19). And we follow the [preprocessing code](http://nlp.cs.berkeley.edu/projects/summarizer.shtml) of [Durrett et al. (2016)](http://nlp.cs.berkeley.edu/pubs/Durrett-BergKirkpatrick-Klein_2016_LearningSumm_paper.pdf) to get the **NYT50** datasets. 
 
@@ -40,7 +44,7 @@ and each line in the file is an example.  For the *text* key, the value can be l
 
 After getting the standard json format, you can prepare the dataset for the graph by ***PrepareDataset.sh*** in the project directory. The processed files will be put under the ***cache*** directory.
 
-The default file names for training, validation and test are: *train.label.jsonl*, *val.label.jsonl* and *test.label.jsonl*. If you would like to use other names, please change the according names in  ***PrepareDataset.sh***,  Line 322-323 in ***train.py*** and Line 188 in ***evaluation.py***. (We recommend default names)
+The default file names for training, validation and test are: *train.label.jsonl*, *val.label.jsonl* and *test.label.jsonl*. If you would like to use other names, please change the corresponding names in  ***PrepareDataset.sh***,  Line 321-322 in ***train.py*** and Line 188 in ***evaluation.py***. (Default names is recommended)
 
 
 
@@ -54,7 +58,7 @@ python train.py --cuda --gpu 0 --data_dir <data dir of your json-format dataset>
 
 
 
-We also provide our checkpoints on **CNN/DailyMail**, **NYT50** and **Multi-News** in [this link](https://drive.google.com/open?id=16wA_JZRm3PrDJgbBiezUDExYmHZobgsB).
+We also provide our checkpoints on **CNN/DailyMail**, **NYT50** and **Multi-News** in [this link](https://drive.google.com/open?id=16wA_JZRm3PrDJgbBiezUDExYmHZobgsB). Besides, the outputs can be found [here](https://drive.google.com/open?id=1VArOyIbGO8ayW0uF8RcmN4Lh2DDtmcQz).
 
 
 
@@ -68,7 +72,11 @@ python evaluation.py --cuda --gpu 0 --data_dir <data dir of your json-format dat
 
 Some options:
 
-- *use_pyrouge*: whether to use pyrouge for evaluation. Default is False (which means using rouge).
+- *use_pyrouge*: whether to use pyrouge for evaluation. Default is **False** (which means rouge).
+- *limit*: whether to limit the output to the length of gold summaries. This option is only set for evaluation on NYT50 (which uses ROUGE-recall instead of ROUGE-f). Default is **False**.
+- *blocking*: whether to use Trigram blocking. Default is **False**.
+- save_label: only save label and do not calculate ROUGE. Default is **False**.
 
-- *limit*: whether to limit the output to the length of gold summaries. This option is only set for evaluation on NYT50 (which uses ROUGE-recall instead of ROUGE-f). Default is False.
-- *blocking*: whether to use Trigram blocking. Default is False.
+
+
+To load our checkpoint for evaluation, you should put it under the ***save_root/eval/*** and make the name for test_model to start with ***eval***. For example, if your save_root is "*checkpoints*", then the checkpoint "*cnndm.ckpt*" should be put under "*checkpoints/eval*" and the test_model is *evalcnndm.ckpt*.
