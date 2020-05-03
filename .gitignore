@@ -1,0 +1,8 @@
+# dir
+__pycache__/*
+checkpoints/*
+save/*
+log/*
+
+# file
+*.pyc
