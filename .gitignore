@@ -1,6 +1,7 @@
 # dir
 __pycache__/*
 checkpoints/*
+cache/*
 save/*
 log/*
 

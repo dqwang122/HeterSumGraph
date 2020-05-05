@@ -14,8 +14,13 @@ from .logger import *
 import sys
 sys.setrecursionlimit(10000)
 
+_ROUGE_PATH = "/remote-home/dqwang/ROUGE/RELEASE-1.5.5"
+_PYROUGE_TEMP_FILE = "/remote-home/dqwang/"
+
+
 REMAP = {"-lrb-": "(", "-rrb-": ")", "-lcb-": "{", "-rcb-": "}", 
         "-lsb-": "[", "-rsb-": "]", "``": '"', "''": '"'} 
+
 
 def clean(x): 
     x = x.lower()
@@ -35,7 +40,6 @@ def rouge_eval(hyps, refer):
 def rouge_all(hyps, refer):
     rouge = Rouge()
     score = rouge.get_scores(hyps, refer)[0]
-    # mean_score = np.mean([score["rouge-1"]["f"], score["rouge-2"]["f"], score["rouge-l"]["f"]])
     return score
 
 def eval_label(match_true, pred, true, total, match):
@@ -54,7 +58,7 @@ def eval_label(match_true, pred, true, total, match):
 def pyrouge_score(hyps, refer, remap = True):
     from pyrouge import Rouge155
     nowTime=datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
-    PYROUGE_ROOT = os.path.join('/remote-home/dqwang/', nowTime)
+    PYROUGE_ROOT = os.path.join(_PYROUGE_TEMP_FILE, nowTime)
     SYSTEM_PATH = os.path.join(PYROUGE_ROOT,'gold')
     MODEL_PATH = os.path.join(PYROUGE_ROOT,'system')
     if os.path.exists(SYSTEM_PATH):
@@ -75,14 +79,14 @@ def pyrouge_score(hyps, refer, remap = True):
     with open(model_file, 'wb') as f:
         f.write(hyps.encode('utf-8'))
 
-    r = Rouge155('/home/dqwang/ROUGE/RELEASE-1.5.5')
+    r = Rouge155(_ROUGE_PATH)
 
     r.system_dir = SYSTEM_PATH
     r.model_dir = MODEL_PATH
     r.system_filename_pattern = 'Reference.(\d+).txt'
     r.model_filename_pattern = 'Model.[A-Z].#ID#.txt'
 
-    output = r.convert_and_evaluate(rouge_args="-e /home/dqwang/ROUGE/RELEASE-1.5.5/data -a -m -n 2 -d")
+    output = r.convert_and_evaluate(rouge_args="-e %s -a -m -n 2 -d" % os.path.join(_ROUGE_PATH, "data"))
     output_dict = r.output_to_dict(output)
 
     shutil.rmtree(PYROUGE_ROOT)
@@ -97,7 +101,7 @@ def pyrouge_score(hyps, refer, remap = True):
 def pyrouge_score_all(hyps_list, refer_list, remap = True):
     from pyrouge import Rouge155
     nowTime=datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
-    PYROUGE_ROOT = os.path.join('/remote-home/dqwang/', nowTime)
+    PYROUGE_ROOT = os.path.join(_PYROUGE_TEMP_FILE, nowTime)
     SYSTEM_PATH = os.path.join(PYROUGE_ROOT,'gold')
     MODEL_PATH = os.path.join(PYROUGE_ROOT,'system')
     if os.path.exists(SYSTEM_PATH):
@@ -120,14 +124,14 @@ def pyrouge_score_all(hyps_list, refer_list, remap = True):
         with open(model_file, 'wb') as f:
             f.write(hyps.encode('utf-8'))
 
-    r = Rouge155('/remote-home/dqwang/ROUGE/RELEASE-1.5.5')
+    r = Rouge155(_ROUGE_PATH)
 
     r.system_dir = SYSTEM_PATH
     r.model_dir = MODEL_PATH
     r.system_filename_pattern = 'Reference.(\d+).txt'
     r.model_filename_pattern = 'Model.[A-Z].#ID#.txt'
 
-    output = r.convert_and_evaluate(rouge_args="-e /remote-home/dqwang/ROUGE/RELEASE-1.5.5/data -a -m -n 2 -d")
+    output = r.convert_and_evaluate(rouge_args="-e %s -a -m -n 2 -d" % os.path.join(_ROUGE_PATH, "data"))
     output_dict = r.output_to_dict(output)
 
     shutil.rmtree(PYROUGE_ROOT)
@@ -143,7 +147,7 @@ def pyrouge_score_all(hyps_list, refer_list, remap = True):
 def pyrouge_score_all_multi(hyps_list, refer_list, remap = True):
     from pyrouge import Rouge155
     nowTime = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
-    PYROUGE_ROOT = os.path.join('/remote-home/dqwang/', nowTime)
+    PYROUGE_ROOT = os.path.join(_PYROUGE_TEMP_FILE, nowTime)
     SYSTEM_PATH = os.path.join(PYROUGE_ROOT, 'system')
     MODEL_PATH = os.path.join(PYROUGE_ROOT, 'gold')
     if os.path.exists(SYSTEM_PATH):
@@ -170,14 +174,14 @@ def pyrouge_score_all_multi(hyps_list, refer_list, remap = True):
             with open(model_file, 'wb') as f:
                 f.write(refer.encode('utf-8'))
 
-    r = Rouge155('/remote-home/dqwang/ROUGE/RELEASE-1.5.5')
+    r = Rouge155(_ROUGE_PATH)
 
     r.system_dir = SYSTEM_PATH
     r.model_dir = MODEL_PATH
     r.system_filename_pattern = 'Model.(\d+).txt'
     r.model_filename_pattern = 'Reference.[A-Z].#ID#.txt'
 
-    output = r.convert_and_evaluate(rouge_args="-e /remote-home/dqwang/ROUGE/RELEASE-1.5.5/data -a -m -n 2 -d")
+    output = r.convert_and_evaluate(rouge_args="-e %s -a -m -n 2 -d" % os.path.join(_ROUGE_PATH, "data"))
     output_dict = r.output_to_dict(output)
 
     shutil.rmtree(PYROUGE_ROOT)
@@ -222,9 +226,6 @@ def cal_label(article, abstract):
         else:
             break
 
-    # label = np.zeros(len(hyps_list), dtype=int)
-    # label[np.array(selected)] = 1
-    # return list(label)
     return selected
 
 def cal_label_limited3(article, abstract):
@@ -260,10 +261,6 @@ def cal_label_limited3(article, abstract):
         selected_sent_cnt += 1
         best_rouge = cur_max_rouge
     
-    # logger.info(selected)
-    # label = np.zeros(len(hyps_list), dtype=int)
-    # label[np.array(selected)] = 1
-    # return list(label)
     return selected
     
 import torch

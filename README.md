@@ -40,7 +40,7 @@ The example looks like this:
 }
 ```
 
-and each line in the file is an example.  For the *text* key, the value can be list of string (single-document) or list of list of string (multi-document). The example in training set can ignore the *summary* key since we only use *label* during the training phrase. All strings need be lowercase and tokenized by [Stanford Tokenizer](https://nlp.stanford.edu/software/tokenizer.shtml).
+and each line in the file is an example.  For the *text* key, the value can be list of string (single-document) or list of list of string (multi-document). The example in training set can ignore the *summary* key since we only use *label* during the training phrase. All strings need be lowercase and tokenized by [Stanford Tokenizer](https://nlp.stanford.edu/software/tokenizer.shtml), and  ***nltk.sent_tokenize*** is used to get sentences.
 
 After getting the standard json format, you can prepare the dataset for the graph by ***PrepareDataset.sh*** in the project directory. The processed files will be put under the ***cache*** directory.
 
@@ -73,6 +73,7 @@ python evaluation.py --cuda --gpu 0 --data_dir <data dir of your json-format dat
 Some options:
 
 - *use_pyrouge*: whether to use pyrouge for evaluation. Default is **False** (which means rouge).
+  - Please change Line17-18 in ***tools/utils.py*** to your own ROUGE path and temp file path.
 - *limit*: whether to limit the output to the length of gold summaries. This option is only set for evaluation on NYT50 (which uses ROUGE-recall instead of ROUGE-f). Default is **False**.
 - *blocking*: whether to use Trigram blocking. Default is **False**.
 - save_label: only save label and do not calculate ROUGE. Default is **False**.
