@@ -58,7 +58,7 @@ python train.py --cuda --gpu 0 --data_dir <data dir of your json-format dataset>
 
 
 
-We also provide our checkpoints on **CNN/DailyMail**, **NYT50** and **Multi-News** in [this link](https://drive.google.com/open?id=16wA_JZRm3PrDJgbBiezUDExYmHZobgsB). Besides, the outputs can be found [here](https://drive.google.com/open?id=1VArOyIbGO8ayW0uF8RcmN4Lh2DDtmcQz).
+We also provide our checkpoints on **CNN/DailyMail**, **NYT50** and **Multi-News** in [this link](https://drive.google.com/open?id=16wA_JZRm3PrDJgbBiezUDExYmHZobgsB). Besides, the outputs can be found [here](https://drive.google.com/open?id=1VArOyIbGO8ayW0uF8RcmN4Lh2DDtmcQz)(NYT50 has been removed due to its license).
 
 
 
