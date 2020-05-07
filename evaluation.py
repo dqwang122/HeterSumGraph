@@ -51,7 +51,7 @@ def load_test_model(model, model_name, eval_dir, save_root, gpu):
         raise ValueError("None of such model! Must be one of evalbestmodel/trainbestmodel/earlystop")
     if not os.path.exists(bestmodel_load_path):
         logger.error("[ERROR] Restoring %s for testing...The path %s does not exist!", model_name, bestmodel_load_path)
-        return None
+        raise ValueError("[ERROR] Restoring %s for testing...The path %s does not exist!" % (model_name, bestmodel_load_path))
     logger.info("[INFO] Restoring %s for testing...The path is %s", model_name, bestmodel_load_path)
 
 
@@ -68,6 +68,13 @@ def load_test_model(model, model_name, eval_dir, save_root, gpu):
 
 
 def run_test(model, dataset, loader, model_name, hps):
+    """ evaluation phrase
+        :param model: the model
+        :param dataset: test dataset which includes text and summary
+        :param loader: test dataset loader
+        :param hps: hps for model
+        :param model_name: model name to load
+    """
     test_dir = os.path.join(hps.save_root, "test") # make a subdir of the root dir for eval data
     eval_dir = os.path.join(hps.save_root, "eval")
     if not os.path.exists(test_dir) : os.makedirs(test_dir)

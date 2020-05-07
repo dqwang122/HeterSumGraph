@@ -7,6 +7,12 @@ from tools.logger import *
 
 class TestPipLine():
     def __init__(self, model, m, test_dir, limited):
+        """
+            :param model: the model
+            :param m: the number of sentence to select
+            :param test_dir: for saving decode files
+            :param limited: for limited Recall evaluation
+        """
         self.model = model
         self.limited = limited
         self.m = m
@@ -33,10 +39,10 @@ class TestPipLine():
         log_dir = os.path.join(self.test_dir, nowTime)
         with open(log_dir, "wb") as resfile:
             for i in range(self.rougePairNum):
-                resfile.write(b"[Reference]:")
+                resfile.write(b"[Reference]\t")
                 resfile.write(self._refer[i].encode('utf-8'))
                 resfile.write(b"\n")
-                resfile.write(b"[hypothesis]:")
+                resfile.write(b"[Hypothesis]\t")
                 resfile.write(self._hyps[i].encode('utf-8'))
                 resfile.write(b"\n")
                 resfile.write(b"\n")
@@ -72,14 +78,20 @@ class TestPipLine():
 
     
 class SLTester(TestPipLine):
-    def __init__(self, model, m, test_dir=None, limited=False, blocking_win = 3):
+    def __init__(self, model, m, test_dir=None, limited=False, blocking_win=3):
         super().__init__(model, m, test_dir, limited)
         self.pred, self.true, self.match, self.match_true = 0, 0, 0, 0
         self._F = 0
         self.criterion = torch.nn.CrossEntropyLoss(reduction='none')
         self.blocking_win = blocking_win
 
-    def evaluation(self, G, index, valset, blocking=False):
+    def evaluation(self, G, index, dataset, blocking=False):
+        """
+            :param G: the model
+            :param index: list, example id
+            :param dataset: dataset which includes text and summary
+            :param blocking: bool, for n-gram blocking
+        """
         self.batch_number += 1
         outputs = self.model.forward(G)
         # logger.debug(outputs)
@@ -94,7 +106,7 @@ class SLTester(TestPipLine):
         glist = dgl.unbatch(G)
         for j in range(len(glist)):
             idx = index[j]
-            example = valset.get_example(idx)
+            example = dataset.get_example(idx)
             original_article_sents = example.original_article_sents
             sent_max_number = len(original_article_sents)
             refer = example.original_abstract
