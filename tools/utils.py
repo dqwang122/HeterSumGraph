@@ -70,8 +70,6 @@ def pyrouge_score_all(hyps_list, refer_list, remap = True):
     if os.path.exists(MODEL_PATH):
         shutil.rmtree(MODEL_PATH)
     os.makedirs(MODEL_PATH)
-    
-    print("change name")
 
     assert len(hyps_list) == len(refer_list)
     for i in range(len(hyps_list)):
@@ -82,10 +80,8 @@ def pyrouge_score_all(hyps_list, refer_list, remap = True):
         hyps = clean(hyps_list[i]) if remap else hyps_list[i]
 
         with open(system_file, 'wb') as f:
-            # f.write(refer.encode('utf-8'))
             f.write(hyps.encode('utf-8'))
         with open(model_file, 'wb') as f:
-            # f.write(hyps.encode('utf-8'))
             f.write(refer.encode('utf-8'))
 
     r = Rouge155(_ROUGE_PATH)
