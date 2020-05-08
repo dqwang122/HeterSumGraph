@@ -21,22 +21,22 @@ import argparse
 import datetime
 import os
 import time
+import json
 
 import torch
 import torch.nn as nn
 from rouge import Rouge
-import dgl
+
+from HiGraph import HSumGraph, HSumDocGraph
+from Tester import SLTester
+from module.dataloader import ExampleSet, MultiExampleSet, graph_collate_fn
+from module.embedding import Word_Embedding
+from module.vocabulary import Vocab
 from tools import utils
 from tools.logger import *
-from Tester import SLTester
-from module.vocabulary import Vocab
-from module.embedding import Word_Embedding
-from module.dataloader import ExampleSet, MultiExampleSet, graph_collate_fn
-
-from model.HiGraph import HSumGraph, HSumDocGraph
 
 
-def load_test_model(model, model_name, eval_dir, save_root, gpu):
+def load_test_model(model, model_name, eval_dir, save_root):
     """ choose which model will be loaded for evaluation """
     if model_name.startswith('eval'):
         bestmodel_load_path = os.path.join(eval_dir, model_name[4:])
@@ -51,30 +51,16 @@ def load_test_model(model, model_name, eval_dir, save_root, gpu):
         raise ValueError("None of such model! Must be one of evalbestmodel/trainbestmodel/earlystop")
     if not os.path.exists(bestmodel_load_path):
         logger.error("[ERROR] Restoring %s for testing...The path %s does not exist!", model_name, bestmodel_load_path)
-        raise ValueError("[ERROR] Restoring %s for testing...The path %s does not exist!" % (model_name, bestmodel_load_path))
+        return None
     logger.info("[INFO] Restoring %s for testing...The path is %s", model_name, bestmodel_load_path)
 
+    model.load_state_dict(torch.load(bestmodel_load_path))
 
-    if len(gpu) > 1:
-        model.load_state_dict(torch.load(bestmodel_load_path))
-        model = model.module
-    else:
-        model.load_state_dict(torch.load(bestmodel_load_path))
-
-    if model == None:
-        raise ValueError("No model has been loaded for evaluation!")
     return model
 
 
 
 def run_test(model, dataset, loader, model_name, hps):
-    """ evaluation phrase
-        :param model: the model
-        :param dataset: test dataset which includes text and summary
-        :param loader: test dataset loader
-        :param hps: hps for model
-        :param model_name: model name to load
-    """
     test_dir = os.path.join(hps.save_root, "test") # make a subdir of the root dir for eval data
     eval_dir = os.path.join(hps.save_root, "eval")
     if not os.path.exists(test_dir) : os.makedirs(test_dir)
@@ -88,7 +74,7 @@ def run_test(model, dataset, loader, model_name, hps):
         resfile = open(log_dir, "w")
         logger.info("[INFO] Write the Evaluation into %s", log_dir)
 
-    model = load_test_model(model, model_name, eval_dir, hps.save_root, hps.gpu)
+    model = load_test_model(model, model_name, eval_dir, hps.save_root)
     model.eval()
 
     iter_start_time=time.time()
@@ -104,7 +90,7 @@ def run_test(model, dataset, loader, model_name, hps):
     running_avg_loss = tester.running_avg_loss
 
     if hps.save_label:
-        import json
+        # save label and do not calculate rouge
         json.dump(tester.extractLabel, resfile)
         tester.SaveDecodeFile()
         logger.info('   | end of test | time: {:5.2f}s | '.format((time.time() - iter_start_time)))
@@ -137,7 +123,7 @@ def run_test(model, dataset, loader, model_name, hps):
 
 
 def main():
-    parser = argparse.ArgumentParser(description='SumGraph Model')
+    parser = argparse.ArgumentParser(description='HeterSumGraph Model')
 
     # Where to find data
     parser.add_argument('--data_dir', type=str, default='data/CNNDM', help='The dataset directory.')
@@ -154,24 +140,24 @@ def main():
     parser.add_argument('--log_root', type=str, default='log/', help='Root directory for all logging.')
 
     # Hyperparameters
-    parser.add_argument('--gpu', type=str, default='0', help='GPU ID to use. For cpu, set -1 [default: -1]')
+    parser.add_argument('--gpu', type=str, default='0', help='GPU ID to use')
     parser.add_argument('--cuda', action='store_true', default=False, help='use cuda')
-    parser.add_argument('--vocab_size', type=int, default=50000, help='Size of vocabulary. These will be read from the vocabulary file in order. If the vocabulary file contains fewer words than this number, or if this number is set to 0, will take all words in the vocabulary file.')
-    parser.add_argument('--batch_size', type=int, default=32, help='Mini batch size [default: 128]')
-    parser.add_argument('--n_iter', type=int, default=1, help='iteration hop')
+    parser.add_argument('--vocab_size', type=int, default=50000, help='Size of vocabulary.')
+    parser.add_argument('--batch_size', type=int, default=32, help='Mini batch size [default: 32]')
+    parser.add_argument('--n_iter', type=int, default=1, help='iteration ')
 
     parser.add_argument('--word_embedding', action='store_true', default=True, help='whether to use Word embedding')
-    parser.add_argument('--word_emb_dim', type=int, default=300, help='Word embedding size [default: 200]')
+    parser.add_argument('--word_emb_dim', type=int, default=300, help='Word embedding size [default: 300]')
     parser.add_argument('--embed_train', action='store_true', default=False, help='whether to train Word embedding [default: False]')
-    parser.add_argument('--feat_embed_size', type=int, default=50, help='Word embedding size [default: 50]')
-    parser.add_argument('--n_layers', type=int, default=1, help='Number of deeplstm layers')
+    parser.add_argument('--feat_embed_size', type=int, default=50, help='feature embedding size [default: 50]')
+    parser.add_argument('--n_layers', type=int, default=1, help='Number of GAT layers [default: 1]')
     parser.add_argument('--lstm_hidden_state', type=int, default=128, help='size of lstm hidden state')
     parser.add_argument('--lstm_layers', type=int, default=2, help='lstm layers')
     parser.add_argument('--bidirectional', action='store_true', default=True, help='use bidirectional LSTM')
     parser.add_argument('--n_feature_size', type=int, default=128, help='size of node feature')
-    parser.add_argument('--hidden_size', type=int, default=64, help='hidden size [default: 512]')
+    parser.add_argument('--hidden_size', type=int, default=64, help='hidden size [default: 64]')
     parser.add_argument('--gcn_hidden_size', type=int, default=128, help='hidden size [default: 64]')
-    parser.add_argument('--ffn_inner_hidden_size', type=int, default=512, help='PositionwiseFeedForward inner hidden size [default: 2048]')
+    parser.add_argument('--ffn_inner_hidden_size', type=int, default=512, help='PositionwiseFeedForward inner hidden size [default: 512]')
     parser.add_argument('--n_head', type=int, default=8, help='multihead attention number [default: 8]')
     parser.add_argument('--recurrent_dropout_prob', type=float, default=0.1, help='recurrent dropout prob [default: 0.1]')
     parser.add_argument('--atten_dropout_prob', type=float, default=0.1,help='attention dropout prob [default: 0.1]')
@@ -181,7 +167,7 @@ def main():
     parser.add_argument('--doc_max_timesteps', type=int, default=50, help='max length of documents (max timesteps of documents)')
     parser.add_argument('--save_label', action='store_true', default=False, help='require multihead attention')
     parser.add_argument('--limited', action='store_true', default=False, help='limited hypo length')
-    parser.add_argument('--blocking', action='store_true', default=False, help='limited hypo length')
+    parser.add_argument('--blocking', action='store_true', default=False, help='ngram blocking')
 
     parser.add_argument('-m', type=int, default=3, help='decode summary length')
 
@@ -221,33 +207,24 @@ def main():
     hps = args
     logger.info(hps)
 
+    test_w2s_path = os.path.join(args.cache_dir, "test.w2s.tfidf.jsonl")
     if hps.model == "HSG":
         model = HSumGraph(hps, embed)
         logger.info("[MODEL] HeterSumGraph ")
-        train_w2s_path = os.path.join(args.cache_dir, "test.w2s.tfidf.jsonl")
-        dataset = ExampleSet(DATA_FILE, vocab, hps.doc_max_timesteps, hps.sent_max_len, FILTER_WORD, train_w2s_path)
+        dataset = ExampleSet(DATA_FILE, vocab, hps.doc_max_timesteps, hps.sent_max_len, FILTER_WORD, test_w2s_path)
         loader = torch.utils.data.DataLoader(dataset, batch_size=hps.batch_size, shuffle=True, num_workers=32,collate_fn=graph_collate_fn)
     elif hps.model == "HDSG":
         model = HSumDocGraph(hps, embed)
         logger.info("[MODEL] HeterDocSumGraph ")
-        train_w2s_path = os.path.join(args.cache_dir, "test.w2s.tfidf.jsonl")
-        train_w2d_path = os.path.join(args.cache_dir, "test.w2d.tfidf.jsonl")
-        dataset = MultiExampleSet(DATA_FILE, vocab, hps.doc_max_timesteps, hps.sent_max_len, FILTER_WORD, train_w2s_path, train_w2d_path)
+        test_w2d_path = os.path.join(args.cache_dir, "test.w2d.tfidf.jsonl")
+        dataset = MultiExampleSet(DATA_FILE, vocab, hps.doc_max_timesteps, hps.sent_max_len, FILTER_WORD, test_w2s_path, test_w2d_path)
         loader = torch.utils.data.DataLoader(dataset, batch_size=hps.batch_size, shuffle=True, num_workers=32,collate_fn=graph_collate_fn)
     else:
         logger.error("[ERROR] Invalid Model Type!")
         raise NotImplementedError("Model Type has not been implemented")
 
     if args.cuda:
-        model = model.cuda()
-
-    if len(args.gpu) > 1:
-        gpuid = args.gpu.split(',')
-        gpuid = [int(s) for s in gpuid]
-        model = nn.DataParallel(model,device_ids=gpuid)
-        logger.info("[INFO] Use Multi-gpu: %s", args.gpu)
-    if hps.cuda:
-        model = model.cuda()
+        model.to(torch.device("cuda:0"))
         logger.info("[INFO] Use cuda")
 
     logger.info("[INFO] Decoding...")

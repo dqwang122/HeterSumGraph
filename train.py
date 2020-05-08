@@ -24,20 +24,19 @@ import os
 import shutil
 import time
 
-import torch
+import dgl
 import numpy as np
+import torch
 from rouge import Rouge
 
-import dgl
-
-from tools.logger import *
+from HiGraph import HSumGraph, HSumDocGraph
 from Tester import SLTester
-from module.dataloader import LoadHiExampleSet
 from module.dataloader import ExampleSet, MultiExampleSet, graph_collate_fn
 from module.embedding import Word_Embedding
 from module.vocabulary import Vocab
+from tools.logger import *
 
-from model.HiGraph import HSumGraph, HSumDocGraph
+_DEBUG_FLAG_ = False
 
 
 def save_model(model, save_file):
@@ -88,8 +87,6 @@ def run_training(model, train_loader, valid_loader, valset, hps, train_dir):
     '''
     logger.info("[INFO] Starting run_training")
 
-    # optimizer = torch.optim.Adamax(filter(lambda p: p.requires_grad, model.parameters()), lr=hps.lr, betas=(0.9, 0.98),
-    # eps=1e-09)
     optimizer = torch.optim.Adam(filter(lambda p: p.requires_grad, model.parameters()), lr=hps.lr)
 
 
@@ -141,10 +138,11 @@ def run_training(model, train_loader, valid_loader, valset, hps, train_dir):
             epoch_loss += float(loss.data)
 
             if i % 100 == 0:
-                for name, param in model.named_parameters():
-                    if param.requires_grad:
-                        logger.debug(name)
-                        logger.debug(param.grad.data.sum())
+                if _DEBUG_FLAG_:
+                    for name, param in model.named_parameters():
+                        if param.requires_grad:
+                            logger.debug(name)
+                            logger.debug(param.grad.data.sum())
                 logger.info('       | end of iter {:3d} | time: {:5.2f}s | train loss {:5.4f} | '
                                 .format(i, (time.time() - iter_start_time),float(train_loss / 100)))
                 train_loss = 0.0
@@ -226,8 +224,6 @@ def run_eval(model, loader, valset, hps, best_loss, best_F, non_descent_cnt, sav
     tester.getMetric()
     F = tester.labelMetric
 
-    # If running_avg_loss is best so far, save this checkpoint (early stopping).
-    # These checkpoints will appear as bestmodel-<iteration_number> in the eval dir
     if best_loss is None or running_avg_loss < best_loss:
         bestmodel_save_path = os.path.join(eval_dir, 'bestmodel_%d' % (saveNo % 3))  # this is where checkpoints of best models are saved
         if best_loss is not None:
@@ -288,7 +284,7 @@ def main():
     parser.add_argument('--word_embedding', action='store_true', default=True, help='whether to use Word embedding [default: True]')
     parser.add_argument('--word_emb_dim', type=int, default=300, help='Word embedding size [default: 300]')
     parser.add_argument('--embed_train', action='store_true', default=False,help='whether to train Word embedding [default: False]')
-    parser.add_argument('--feat_embed_size', type=int, default=50, help='Word embedding size [default: 50]')
+    parser.add_argument('--feat_embed_size', type=int, default=50, help='feature embedding size [default: 50]')
     parser.add_argument('--n_layers', type=int, default=1, help='Number of GAT layers [default: 1]')
     parser.add_argument('--lstm_hidden_state', type=int, default=128, help='size of lstm hidden state [default: 128]')
     parser.add_argument('--lstm_layers', type=int, default=2, help='Number of lstm layers [default: 2]')
@@ -348,25 +344,24 @@ def main():
     hps = args
     logger.info(hps)
 
+    train_w2s_path = os.path.join(args.cache_dir, "train.w2s.tfidf.jsonl")
+    val_w2s_path = os.path.join(args.cache_dir, "val.w2s.tfidf.jsonl")
+
     if hps.model == "HSG":
         model = HSumGraph(hps, embed)
         logger.info("[MODEL] HeterSumGraph ")
-        train_w2s_path = os.path.join(args.cache_dir, "train.w2s.tfidf.jsonl")
         dataset = ExampleSet(DATA_FILE, vocab, hps.doc_max_timesteps, hps.sent_max_len, FILTER_WORD, train_w2s_path)
         train_loader = torch.utils.data.DataLoader(dataset, batch_size=hps.batch_size, shuffle=True, num_workers=32,collate_fn=graph_collate_fn)
         del dataset
-        val_w2s_path = os.path.join(args.cache_dir, "val.w2s.tfidf.jsonl")
         valid_dataset = ExampleSet(VALID_FILE, vocab, hps.doc_max_timesteps, hps.sent_max_len, FILTER_WORD, val_w2s_path)
         valid_loader = torch.utils.data.DataLoader(valid_dataset, batch_size=hps.batch_size, shuffle=False, collate_fn=graph_collate_fn, num_workers=32)
     elif hps.model == "HDSG":
         model = HSumDocGraph(hps, embed)
         logger.info("[MODEL] HeterDocSumGraph ")
-        train_w2s_path = os.path.join(args.cache_dir, "train.w2s.tfidf.jsonl")
         train_w2d_path = os.path.join(args.cache_dir, "train.w2d.tfidf.jsonl")
         dataset = MultiExampleSet(DATA_FILE, vocab, hps.doc_max_timesteps, hps.sent_max_len, FILTER_WORD, train_w2s_path, train_w2d_path)
         train_loader = torch.utils.data.DataLoader(dataset, batch_size=hps.batch_size, shuffle=True, num_workers=32,collate_fn=graph_collate_fn)
         del dataset
-        val_w2s_path = os.path.join(args.cache_dir, "val.w2s.tfidf.jsonl")
         val_w2d_path = os.path.join(args.cache_dir, "val.w2d.tfidf.jsonl")
         valid_dataset = MultiExampleSet(VALID_FILE, vocab, hps.doc_max_timesteps, hps.sent_max_len, FILTER_WORD, val_w2s_path, val_w2d_path)
         valid_loader = torch.utils.data.DataLoader(valid_dataset, batch_size=hps.batch_size, shuffle=False,collate_fn=graph_collate_fn, num_workers=32)  # Shuffle Must be False for ROUGE evaluation

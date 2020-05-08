@@ -50,7 +50,7 @@ def eval_label(match_true, pred, true, total, match):
         recall = match_true / true
         F = 2 * precision * recall / (precision + recall)
     except ZeroDivisionError:
-        F = 0.0
+        accu, precision, recall, F = 0.0, 0.0, 0.0, 0.0
         logger.error("[Error] float division by zero")
     return accu, precision, recall, F
 
