@@ -53,7 +53,7 @@ The default file names for training, validation and test are: *train.label.jsonl
 For training, you can run commands like this:
 
 ```shell
-python train.py --cuda --gpu 0 --data_dir <data dir of your json-format dataset> --cache_dir <cache directory of graph features> --model [HSG|HDSG] --save_root <model path> --log_root <log path> --lr_descent --grad_clip -m 3
+python train.py --cuda --gpu 0 --data_dir <data/dir/of/your/json-format/dataset> --cache_dir <cache/directory/of/graph/features> --embedding_path <glove_path> --model [HSG|HDSG] --save_root <model path> --log_root <log path> --lr_descent --grad_clip -m 3
 ```
 
 
@@ -67,7 +67,7 @@ We also provide our checkpoints on **CNN/DailyMail**, **NYT50** and **Multi-News
 For evaluation, the command may like this:
 
 ```shell
-python evaluation.py --cuda --gpu 0 --data_dir <data dir of your json-format dataset> --cache_dir <cache directory of graph features> --model [HSG|HDSG] --save_root <model path> --log_root <log path> -m 3 --test_model multi --use_pyrouge
+python evaluation.py --cuda --gpu 0 --data_dir <data/dir/of/your/json-format/dataset> --cache_dir <cache/directory/of/graph/features> --embedding_path <glove_path>  --model [HSG|HDSG] --save_root <model path> --log_root <log path> -m 3 --test_model multi --use_pyrouge
 ```
 
 Some options:
