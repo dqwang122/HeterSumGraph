@@ -81,3 +81,26 @@ Some options:
 
 
 To load our checkpoint for evaluation, you should put it under the ***save_root/eval/*** and make the name for test_model to start with ***eval***. For example, if your save_root is "*checkpoints*", then the checkpoint "*cnndm.ckpt*" should be put under "*checkpoints/eval*" and the test_model is *evalcnndm.ckpt*.
+
+
+
+## ROUGE Installation
+
+In order to get correct ROUGE scores, we recommend using the following commands to install the ROUGE environment:
+
+```shell
+sudo apt-get install libxml-perl libxml-dom-perl
+pip install git+git://github.com/bheinzerling/pyrouge
+export PYROUGE_HOME_DIR=the/path/to/RELEASE-1.5.5
+pyrouge_set_rouge_path $PYROUGE_HOME_DIR
+chmod +x $PYROUGE_HOME_DIR/ROUGE-1.5.5.pl
+```
+
+You refer to https://github.com/andersjo/pyrouge/tree/master/tools/ROUGE-1.5.5 for RELEASE-1.5.5 and remember to build Wordnet 2.0 instead of 1.6 in RELEASE-1.5.5/data:
+
+```shell
+cd the/path/to/RELEASE-1.5.5/data/WordNet-2.0-Exceptions/
+./buildExeptionDB.pl . exc WordNet-2.0.exc.db
+cd ../
+ln -s WordNet-2.0-Exceptions/WordNet-2.0.exc.db WordNet-2.0.exc.db
+```
