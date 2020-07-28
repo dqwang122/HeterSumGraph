@@ -255,6 +255,10 @@ class ExampleSet(torch.utils.data.Dataset):
                                 data={"tffrac": torch.LongTensor([tfidf_box]), "dtype": torch.Tensor([0])})
                     G.add_edges(sent_nid, wid2nid[wid],
                                 data={"tffrac": torch.LongTensor([tfidf_box]), "dtype": torch.Tensor([0])})
+            
+            # The two lines can be commented out if you use the code for your own training, since HSG does not use sent2sent edges. 
+            # However, if you want to use the released checkpoint directly, please leave them here.
+            # Otherwise it may cause some parameter corresponding errors due to the version differences.
             G.add_edges(sent_nid, sentid2nid, data={"dtype": torch.ones(N)})
             G.add_edges(sentid2nid, sent_nid, data={"dtype": torch.ones(N)})
         G.nodes[sentid2nid].data["words"] = torch.LongTensor(input_pad)  # [N, seq_len]
