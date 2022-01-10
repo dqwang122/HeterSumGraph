@@ -321,7 +321,7 @@ class MultiExampleSet(ExampleSet):
                 sent2doc[sentNo] = i
                 doc2sent[i].append(sentNo)
                 sentNo += 1
-                if sentNo > sentNum:
+                if sentNo >= sentNum:
                     return sent2doc
         return sent2doc
 
