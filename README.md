@@ -14,7 +14,7 @@ Some code are borrowed from [PG](https://github.com/abisee/pointer-generator) an
 - [PyTorch](https://pytorch.org/) 1.0+
 - [DGL](http://dgl.ai) 0.4
 - [rouge](https://github.com/pltrdy/rouge) 1.0.0
-  - A full Python Implementation of the ROUGE Metric which is used in validation phrase
+  - A full Python Implementation of the ROUGE Metric which is used in validation phase
 - [pyrouge](https://github.com/bheinzerling/pyrouge) 0.1.3
 
 - others
@@ -40,7 +40,7 @@ The example looks like this:
 }
 ```
 
-and each line in the file is an example.  For the *text* key, the value can be list of string (single-document) or list of list of string (multi-document). The example in training set can ignore the *summary* key since we only use *label* during the training phrase. All strings need be lowercase and tokenized by [Stanford Tokenizer](https://nlp.stanford.edu/software/tokenizer.shtml), and  ***nltk.sent_tokenize*** is used to get sentences.
+and each line in the file is an example.  For the *text* key, the value can be list of string (single-document) or list of list of string (multi-document). The example in training set can ignore the *summary* key since we only use *label* during the training phase. All strings need be lowercase and tokenized by [Stanford Tokenizer](https://nlp.stanford.edu/software/tokenizer.shtml), and  ***nltk.sent_tokenize*** is used to get sentences.
 
 After getting the standard json format, you can prepare the dataset for the graph by ***PrepareDataset.sh*** in the project directory. The processed files will be put under the ***cache*** directory.
 
