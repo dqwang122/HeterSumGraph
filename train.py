@@ -23,6 +23,7 @@ import datetime
 import os
 import shutil
 import time
+import random
 
 import dgl
 import numpy as np
@@ -274,6 +275,7 @@ def main():
     parser.add_argument('--log_root', type=str, default='log/', help='Root directory for all logging.')
 
     # Hyperparameters
+    parser.add_argument('--seed', type=int, default=666, help='set the random seed [default: 666]')
     parser.add_argument('--gpu', type=str, default='0', help='GPU ID to use. [default: 0]')
     parser.add_argument('--cuda', action='store_true', default=False, help='GPU or CPU [default: False]')
     parser.add_argument('--vocab_size', type=int, default=50000,help='Size of vocabulary. [default: 50000]')
@@ -309,7 +311,12 @@ def main():
     parser.add_argument('-m', type=int, default=3, help='decode summary length')
 
     args = parser.parse_args()
-
+    
+    # set the seed
+    random.seed(args.seed)
+    np.random.seed(args.seed)
+    torch.manual_seed(args.seed)
+    
     os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu
     torch.set_printoptions(threshold=50000)
 
