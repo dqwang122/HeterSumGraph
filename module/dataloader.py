@@ -382,7 +382,7 @@ class MultiExampleSet(ExampleSet):
             # s2d
             docid = sent2doc[i]
             docnid = docid2nid[docid]
-            G.add_edge(sent_nid, docnid, data={"dtype": torch.Tensor([2])})
+            G.add_edge(sent_nid, docnid, data={"tffrac": torch.LongTensor([0]), "dtype": torch.Tensor([2])})
 
         # add doc edges
         for i in range(article_num):
