@@ -34,7 +34,7 @@ class MultiHeadSGATLayer(nn.Module):
         self.merge = merge
         self.dropout = nn.Dropout(attn_drop_out)
 
-    def forward(self, g, h):
+    def forward(self, g, o, h):
         head_outs = [attn_head(g, self.dropout(h)) for attn_head in self.heads]  # n_head * [n_nodes, hidden_size]
         if self.merge == 'cat':
             # concat on the output feature dimension (dim=1)
@@ -52,8 +52,8 @@ class MultiHeadLayer(nn.Module):
         self.merge = merge
         self.dropout = nn.Dropout(attn_drop_out)
 
-    def forward(self, g, h):
-        head_outs = [attn_head(g, self.dropout(h)) for attn_head in self.heads]  # n_head * [n_nodes, hidden_size]
+    def forward(self, g, o, h):
+        head_outs = [attn_head(g, self.dropout(o), self.dropout(h)) for attn_head in self.heads]  # n_head * [n_nodes, hidden_size]
         if self.merge == 'cat':
             # concat on the output feature dimension (dim=1)
             result = torch.cat(head_outs, dim=1)  # [n_nodes, hidden_size * n_head]

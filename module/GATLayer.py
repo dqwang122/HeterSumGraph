@@ -101,14 +101,14 @@ class WSGATLayer(nn.Module):
         h = torch.sum(alpha * nodes.mailbox['z'], dim=1)
         return {'sh': h}
 
-    def forward(self, g, h):
+    def forward(self, g, dsth, srch):
         wnode_id = g.filter_nodes(lambda nodes: nodes.data["unit"] == 0)
         snode_id = g.filter_nodes(lambda nodes: nodes.data["unit"] == 1)
         wsedge_id = g.filter_edges(lambda edges: (edges.src["unit"] == 0) & (edges.dst["unit"] == 1))
         # print("id in WSGATLayer")
         # print(wnode_id, snode_id, wsedge_id)
-        z = self.fc(h)
-        g.nodes[wnode_id].data['z'] = z
+        g.nodes[wnode_id].data['z'] = self.fc(srch)
+        g.nodes[snode_id].data['z'] = self.fc(dsth)
         g.apply_edges(self.edge_attention, edges=wsedge_id)
         g.pull(snode_id, self.message_func, self.reduce_func)
         g.ndata.pop('z')
@@ -139,12 +139,12 @@ class SWGATLayer(nn.Module):
         h = torch.sum(alpha * nodes.mailbox['z'], dim=1)
         return {'sh': h}
 
-    def forward(self, g, h):
+    def forward(self, g, dsth, srch):
         wnode_id = g.filter_nodes(lambda nodes: nodes.data["unit"] == 0)
         snode_id = g.filter_nodes(lambda nodes: nodes.data["unit"] == 1)
         swedge_id = g.filter_edges(lambda edges: (edges.src["unit"] == 1) & (edges.dst["unit"] == 0))
-        z = self.fc(h)
-        g.nodes[snode_id].data['z'] = z
+        g.nodes[snode_id].data['z'] = self.fc(srch)
+        g.nodes[wnode_id].data['z'] = self.fc(dsth)
         g.apply_edges(self.edge_attention, edges=swedge_id)
         g.pull(wnode_id, self.message_func, self.reduce_func)
         g.ndata.pop('z')
