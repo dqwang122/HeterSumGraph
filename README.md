@@ -6,7 +6,7 @@ Code for ACL 2020 paper: [Heterogeneous Graph Neural Networks for Extractive Doc
 
 Some code are borrowed from [PG](https://github.com/abisee/pointer-generator) and [Transformer](https://github.com/jadore801120/attention-is-all-you-need-pytorch). Thanks for their work.
 
-
+*Thanks for issue https://github.com/dqwang122/HeterSumGraph/issues/28 to point out the flaw of the implementation of GAT layers. The previous version ignores the hidden states of destination nodes when the source and destination nodes have different node types. Since this change will affect the released checkpoints, we update the code in **dev** branch.*
 
 ## Dependency 
 
