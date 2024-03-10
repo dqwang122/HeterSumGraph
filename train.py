@@ -110,8 +110,8 @@ def run_training(model, train_loader, valid_loader, valset, hps, train_dir):
             model.train()
 
             if hps.cuda:
-                G.to(torch.device("cuda"))
-
+                G = G.to(torch.device("cuda"))
+            graph_device = G.device
             outputs = model.forward(G)  # [n_snodes, 2]
             snode_id = G.filter_nodes(lambda nodes: nodes.data["dtype"] == 1)
             label = G.ndata["label"][snode_id].sum(-1)  # [n_nodes]
@@ -202,7 +202,7 @@ def run_eval(model, loader, valset, hps, best_loss, best_F, non_descent_cnt, sav
         tester = SLTester(model, hps.m)
         for i, (G, index) in enumerate(loader):
             if hps.cuda:
-                G.to(torch.device("cuda"))
+                G.to(torch.device(0))
             tester.evaluation(G, index, valset)
 
     running_avg_loss = tester.running_avg_loss
@@ -292,7 +292,7 @@ def main():
     parser.add_argument('--lstm_layers', type=int, default=2, help='Number of lstm layers [default: 2]')
     parser.add_argument('--bidirectional', action='store_true', default=True, help='whether to use bidirectional LSTM [default: True]')
     parser.add_argument('--n_feature_size', type=int, default=128, help='size of node feature [default: 128]')
-    parser.add_argument('--hidden_size', type=int, default=64, help='hidden size [default: 64]')
+    parser.add_argument('--hidden_size', type=int, default=300, help='hidden size [default: 64]')
     parser.add_argument('--ffn_inner_hidden_size', type=int, default=512,help='PositionwiseFeedForward inner hidden size [default: 512]')
     parser.add_argument('--n_head', type=int, default=8, help='multihead attention number [default: 8]')
     parser.add_argument('--recurrent_dropout_prob', type=float, default=0.1,help='recurrent dropout prob [default: 0.1]')

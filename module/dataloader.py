@@ -232,7 +232,7 @@ class ExampleSet(torch.utils.data.Dataset):
             edge:
                 word2sent, sent2word:  tffrac=int, dtype=0
         """
-        G = dgl.DGLGraph()
+        G = dgl.graph(([], []))
         wid2nid, nid2wid = self.AddWordNode(G, input_pad)
         w_nodes = len(nid2wid)
 
@@ -345,7 +345,7 @@ class MultiExampleSet(ExampleSet):
                 sent2doc: dtype=2
         """
         # add word nodes
-        G = dgl.DGLGraph()
+        G = dgl.graph(([], []))
         wid2nid, nid2wid = self.AddWordNode(G, sent_pad)
         w_nodes = len(nid2wid)
 

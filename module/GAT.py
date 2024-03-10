@@ -54,9 +54,11 @@ class WSWGAT(nn.Module):
             origin, neighbor = None, None
 
         if self.layerType == "S2S":
-            h = F.elu(self.layer(g, neighbor))
+            x = self.layer(g, neighbor)
+            h = F.elu(x)
         else:
-            h = F.elu(self.layer(g, origin, neighbor))
+            x = self.layer(g, origin, neighbor)
+            h = F.elu(x)
         h = h + origin
         h = self.ffn(h.unsqueeze(0)).squeeze(0)
         return h
