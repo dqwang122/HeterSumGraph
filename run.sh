@@ -1,0 +1,1 @@
+python train.py --cuda --gpu 0 --data_dir /scratch/hitesh.goel/cnndm --cache_dir /scratch/hitesh.goel/cache/CNNDM  --embedding_path /scratch/hitesh.goel/glove.6B.300d.txt --model HSG --save_root models --log_root logs  --lr_descent --grad_clip -m 3 --batch_size 8  
