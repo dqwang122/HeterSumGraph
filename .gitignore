@@ -4,6 +4,6 @@ checkpoints/*
 cache/*
 save/*
 log/*
-
+models/*
 # file
 *.pyc

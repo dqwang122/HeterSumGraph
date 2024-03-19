@@ -202,7 +202,7 @@ def run_eval(model, loader, valset, hps, best_loss, best_F, non_descent_cnt, sav
         tester = SLTester(model, hps.m)
         for i, (G, index) in enumerate(loader):
             if hps.cuda:
-                G.to(torch.device(0))
+               G = G.to(torch.device(0))
             tester.evaluation(G, index, valset)
 
     running_avg_loss = tester.running_avg_loss
@@ -307,7 +307,7 @@ def main():
     parser.add_argument('--lr_descent', action='store_true', default=False, help='learning rate descent')
     parser.add_argument('--grad_clip', action='store_true', default=False, help='for gradient clipping')
     parser.add_argument('--max_grad_norm', type=float, default=1.0, help='for gradient clipping max gradient normalization')
-
+    parser.add_argument('--num_workers', type=int, default=32, help='Number of workers in data loader [default: 4]')
     parser.add_argument('-m', type=int, default=3, help='decode summary length')
 
     args = parser.parse_args()
@@ -358,20 +358,20 @@ def main():
         model = HSumGraph(hps, embed)
         logger.info("[MODEL] HeterSumGraph ")
         dataset = ExampleSet(DATA_FILE, vocab, hps.doc_max_timesteps, hps.sent_max_len, FILTER_WORD, train_w2s_path)
-        train_loader = torch.utils.data.DataLoader(dataset, batch_size=hps.batch_size, shuffle=True, num_workers=32,collate_fn=graph_collate_fn, persistent_workers=True)
+        train_loader = torch.utils.data.DataLoader(dataset, batch_size=hps.batch_size, shuffle=True, num_workers=0,collate_fn=graph_collate_fn,pin_memory=True)
         del dataset
         valid_dataset = ExampleSet(VALID_FILE, vocab, hps.doc_max_timesteps, hps.sent_max_len, FILTER_WORD, val_w2s_path)
-        valid_loader = torch.utils.data.DataLoader(valid_dataset, batch_size=hps.batch_size, shuffle=False, collate_fn=graph_collate_fn, num_workers=32, persistent_workers=True)
+        valid_loader = torch.utils.data.DataLoader(valid_dataset, batch_size=hps.batch_size, shuffle=False, collate_fn=graph_collate_fn, num_workers=0,pin_memory=True)
     elif hps.model == "HDSG":
         model = HSumDocGraph(hps, embed)
         logger.info("[MODEL] HeterDocSumGraph ")
         train_w2d_path = os.path.join(args.cache_dir, "train.w2d.tfidf.jsonl")
         dataset = MultiExampleSet(DATA_FILE, vocab, hps.doc_max_timesteps, hps.sent_max_len, FILTER_WORD, train_w2s_path, train_w2d_path)
-        train_loader = torch.utils.data.DataLoader(dataset, batch_size=hps.batch_size, shuffle=True, num_workers=32,collate_fn=graph_collate_fn, persistent_workers=True)
+        train_loader = torch.utils.data.DataLoader(dataset, batch_size=hps.batch_size, shuffle=True, num_workers=0,collate_fn=graph_collate_fn,pin_memory=True)
         del dataset
         val_w2d_path = os.path.join(args.cache_dir, "val.w2d.tfidf.jsonl")
         valid_dataset = MultiExampleSet(VALID_FILE, vocab, hps.doc_max_timesteps, hps.sent_max_len, FILTER_WORD, val_w2s_path, val_w2d_path)
-        valid_loader = torch.utils.data.DataLoader(valid_dataset, batch_size=hps.batch_size, shuffle=False,collate_fn=graph_collate_fn, num_workers=32, persistent_workers=True)  # Shuffle Must be False for ROUGE evaluation
+        valid_loader = torch.utils.data.DataLoader(valid_dataset, batch_size=hps.batch_size, shuffle=False,collate_fn=graph_collate_fn, num_workers=0,pin_memory=True)  # Shuffle Must be False for ROUGE evaluation
     else:
         logger.error("[ERROR] Invalid Model Type!")
         raise NotImplementedError("Model Type has not been implemented")

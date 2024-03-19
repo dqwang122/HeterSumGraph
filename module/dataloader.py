@@ -159,7 +159,7 @@ class ExampleSet(torch.utils.data.Dataset):
 
         logger.info("[INFO] Start reading %s", self.__class__.__name__)
         start = time.time()
-        self.example_list = readJson(data_path)
+        self.example_list = readJson(data_path)[:1000]
         logger.info("[INFO] Finish reading %s. Total time is %f, Total size is %d", self.__class__.__name__,
                     time.time() - start, len(self.example_list))
         self.size = len(self.example_list)
