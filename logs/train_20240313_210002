@@ -1,0 +1,25 @@
+2024-03-13 21:00:02,215 INFO    : Pytorch 2.1.2+cu121
+2024-03-13 21:00:02,215 INFO    : [INFO] Create Vocab, vocab path is ../cache/CNNDM/vocab
+2024-03-13 21:00:02,276 INFO    : [INFO] max_size of vocab was specified as 50000; we now have 50000 words. Stopping reading.
+2024-03-13 21:00:02,276 INFO    : [INFO] Finished constructing vocabulary of 50000 total words. Last word added: chaudhary
+2024-03-13 21:00:02,467 INFO    : [INFO] Loading external word embedding...
+2024-03-13 21:00:22,191 INFO    : [INFO] External Word Embedding iov count: 48427, oov count: 1573
+2024-03-13 21:00:23,069 INFO    : Namespace(data_dir='../cnndm', cache_dir='../cache/CNNDM', embedding_path='../glove.6B.300d.txt', model='HSG', restore_model='None', save_root='models', log_root='logs', seed=666, gpu='0', cuda=True, vocab_size=50000, n_epochs=20, batch_size=8, n_iter=1, word_embedding=True, word_emb_dim=300, embed_train=False, feat_embed_size=50, n_layers=1, lstm_hidden_state=128, lstm_layers=2, bidirectional=True, n_feature_size=600, hidden_size=300, ffn_inner_hidden_size=512, n_head=6, recurrent_dropout_prob=0.1, atten_dropout_prob=0.1, ffn_dropout_prob=0.1, use_orthnormal_init=True, sent_max_len=100, doc_max_timesteps=50, lr=0.0005, lr_descent=True, grad_clip=True, max_grad_norm=1.0, num_workers=0, m=3)
+2024-03-13 21:00:23,214 INFO    : [MODEL] HeterSumGraph 
+2024-03-13 21:00:23,214 INFO    : [INFO] Start reading ExampleSet
+2024-03-13 21:00:29,787 INFO    : [INFO] Finish reading ExampleSet. Total time is 6.573366, Total size is 287084
+2024-03-13 21:00:29,788 INFO    : [INFO] Loading filter word File ../cache/CNNDM/filter_word.txt
+2024-03-13 21:00:30,010 INFO    : [INFO] Loading word2sent TFIDF file from ../cache/CNNDM/train.w2s.tfidf.jsonl!
+2024-03-13 21:02:17,934 INFO    : [INFO] Start reading ExampleSet
+2024-03-13 21:02:22,055 INFO    : [INFO] Finish reading ExampleSet. Total time is 4.120558, Total size is 13367
+2024-03-13 21:02:22,056 INFO    : [INFO] Loading filter word File ../cache/CNNDM/filter_word.txt
+2024-03-13 21:02:22,285 INFO    : [INFO] Loading word2sent TFIDF file from ../cache/CNNDM/val.w2s.tfidf.jsonl!
+2024-03-13 21:02:29,065 INFO    : [INFO] Use cuda
+2024-03-13 21:02:29,065 INFO    : [INFO] Create new model for training...
+2024-03-13 21:02:29,073 INFO    : [INFO] Starting run_training
+2024-03-13 21:02:35,444 INFO    :        | end of iter   0 | time:  2.85s | train loss 0.1739 | 
+2024-03-13 21:08:35,299 INFO    :        | end of iter 100 | time:  1.19s | train loss 7.1492 | 
+2024-03-13 21:14:35,217 INFO    :        | end of iter 200 | time:  1.25s | train loss 6.4774 | 
+2024-03-13 21:20:35,631 INFO    :        | end of iter 300 | time:  1.44s | train loss 6.3574 | 
+2024-03-13 21:25:29,217 ERROR   : [Error] Caught keyboard interrupt on worker. Stopping supervisor...
+2024-03-13 21:25:29,363 INFO    : [INFO] Saving model to models/train/earlystop

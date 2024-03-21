@@ -110,8 +110,8 @@ def run_training(model, train_loader, valid_loader, valset, hps, train_dir):
             model.train()
 
             if hps.cuda:
-                G.to(torch.device("cuda"))
-
+                G = G.to(torch.device("cuda"))
+            graph_device = G.device
             outputs = model.forward(G)  # [n_snodes, 2]
             snode_id = G.filter_nodes(lambda nodes: nodes.data["dtype"] == 1)
             label = G.ndata["label"][snode_id].sum(-1)  # [n_nodes]
@@ -202,7 +202,7 @@ def run_eval(model, loader, valset, hps, best_loss, best_F, non_descent_cnt, sav
         tester = SLTester(model, hps.m)
         for i, (G, index) in enumerate(loader):
             if hps.cuda:
-                G.to(torch.device("cuda"))
+               G = G.to(torch.device(0))
             tester.evaluation(G, index, valset)
 
     running_avg_loss = tester.running_avg_loss
@@ -291,10 +291,10 @@ def main():
     parser.add_argument('--lstm_hidden_state', type=int, default=128, help='size of lstm hidden state [default: 128]')
     parser.add_argument('--lstm_layers', type=int, default=2, help='Number of lstm layers [default: 2]')
     parser.add_argument('--bidirectional', action='store_true', default=True, help='whether to use bidirectional LSTM [default: True]')
-    parser.add_argument('--n_feature_size', type=int, default=128, help='size of node feature [default: 128]')
-    parser.add_argument('--hidden_size', type=int, default=64, help='hidden size [default: 64]')
+    parser.add_argument('--n_feature_size', type=int, default=600, help='size of node feature [default: 128]')
+    parser.add_argument('--hidden_size', type=int, default=300, help='hidden size [default: 64]')
     parser.add_argument('--ffn_inner_hidden_size', type=int, default=512,help='PositionwiseFeedForward inner hidden size [default: 512]')
-    parser.add_argument('--n_head', type=int, default=8, help='multihead attention number [default: 8]')
+    parser.add_argument('--n_head', type=int, default=6, help='multihead attention number [default: 8]')
     parser.add_argument('--recurrent_dropout_prob', type=float, default=0.1,help='recurrent dropout prob [default: 0.1]')
     parser.add_argument('--atten_dropout_prob', type=float, default=0.1, help='attention dropout prob [default: 0.1]')
     parser.add_argument('--ffn_dropout_prob', type=float, default=0.1,help='PositionwiseFeedForward dropout prob [default: 0.1]')
@@ -307,7 +307,7 @@ def main():
     parser.add_argument('--lr_descent', action='store_true', default=False, help='learning rate descent')
     parser.add_argument('--grad_clip', action='store_true', default=False, help='for gradient clipping')
     parser.add_argument('--max_grad_norm', type=float, default=1.0, help='for gradient clipping max gradient normalization')
-
+    parser.add_argument('--num_workers', type=int, default=32, help='Number of workers in data loader [default: 4]')
     parser.add_argument('-m', type=int, default=3, help='decode summary length')
 
     args = parser.parse_args()
@@ -321,8 +321,8 @@ def main():
     torch.set_printoptions(threshold=50000)
 
     # File paths
-    DATA_FILE = os.path.join(args.data_dir, "train.label.jsonl")
-    VALID_FILE = os.path.join(args.data_dir, "val.label.jsonl")
+    DATA_FILE = os.path.join(args.data_dir, "index_to_file_mapping.json")
+    VALID_FILE = os.path.join(args.data_dir, "index_to_file_mapping_val.json")
     VOCAL_FILE = os.path.join(args.cache_dir, "vocab")
     FILTER_WORD = os.path.join(args.cache_dir, "filter_word.txt")
     LOG_PATH = args.log_root
@@ -351,27 +351,27 @@ def main():
     hps = args
     logger.info(hps)
 
-    train_w2s_path = os.path.join(args.cache_dir, "train.w2s.tfidf.jsonl")
-    val_w2s_path = os.path.join(args.cache_dir, "val.w2s.tfidf.jsonl")
+    train_w2s_path = os.path.join(args.cache_dir, "index_to_file_mapping_train.json")
+    val_w2s_path = os.path.join(args.cache_dir, "index_to_file_mapping_val.json")
 
     if hps.model == "HSG":
         model = HSumGraph(hps, embed)
         logger.info("[MODEL] HeterSumGraph ")
         dataset = ExampleSet(DATA_FILE, vocab, hps.doc_max_timesteps, hps.sent_max_len, FILTER_WORD, train_w2s_path)
-        train_loader = torch.utils.data.DataLoader(dataset, batch_size=hps.batch_size, shuffle=True, num_workers=32,collate_fn=graph_collate_fn)
+        train_loader = torch.utils.data.DataLoader(dataset, batch_size=hps.batch_size, shuffle=True, num_workers=args.num_workers,collate_fn=graph_collate_fn,pin_memory=True)
         del dataset
         valid_dataset = ExampleSet(VALID_FILE, vocab, hps.doc_max_timesteps, hps.sent_max_len, FILTER_WORD, val_w2s_path)
-        valid_loader = torch.utils.data.DataLoader(valid_dataset, batch_size=hps.batch_size, shuffle=False, collate_fn=graph_collate_fn, num_workers=32)
+        valid_loader = torch.utils.data.DataLoader(valid_dataset, batch_size=hps.batch_size, shuffle=False, collate_fn=graph_collate_fn, num_workers=args.num_workers,pin_memory=True)
     elif hps.model == "HDSG":
         model = HSumDocGraph(hps, embed)
         logger.info("[MODEL] HeterDocSumGraph ")
         train_w2d_path = os.path.join(args.cache_dir, "train.w2d.tfidf.jsonl")
         dataset = MultiExampleSet(DATA_FILE, vocab, hps.doc_max_timesteps, hps.sent_max_len, FILTER_WORD, train_w2s_path, train_w2d_path)
-        train_loader = torch.utils.data.DataLoader(dataset, batch_size=hps.batch_size, shuffle=True, num_workers=32,collate_fn=graph_collate_fn)
+        train_loader = torch.utils.data.DataLoader(dataset, batch_size=hps.batch_size, shuffle=True, num_workers=args.num_workers,collate_fn=graph_collate_fn,pin_memory=True)
         del dataset
         val_w2d_path = os.path.join(args.cache_dir, "val.w2d.tfidf.jsonl")
         valid_dataset = MultiExampleSet(VALID_FILE, vocab, hps.doc_max_timesteps, hps.sent_max_len, FILTER_WORD, val_w2s_path, val_w2d_path)
-        valid_loader = torch.utils.data.DataLoader(valid_dataset, batch_size=hps.batch_size, shuffle=False,collate_fn=graph_collate_fn, num_workers=32)  # Shuffle Must be False for ROUGE evaluation
+        valid_loader = torch.utils.data.DataLoader(valid_dataset, batch_size=hps.batch_size, shuffle=False,collate_fn=graph_collate_fn, num_workers=args.num_workers,pin_memory=True)  # Shuffle Must be False for ROUGE evaluation
     else:
         logger.error("[ERROR] Invalid Model Type!")
         raise NotImplementedError("Model Type has not been implemented")

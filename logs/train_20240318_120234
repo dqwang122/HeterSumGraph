@@ -1,0 +1,20 @@
+2024-03-18 12:02:34,617 INFO    : Pytorch 2.1.2+cu121
+2024-03-18 12:02:34,617 INFO    : [INFO] Create Vocab, vocab path is ../cache/CNNDM/vocab
+2024-03-18 12:02:34,666 INFO    : [INFO] max_size of vocab was specified as 50000; we now have 50000 words. Stopping reading.
+2024-03-18 12:02:34,666 INFO    : [INFO] Finished constructing vocabulary of 50000 total words. Last word added: chaudhary
+2024-03-18 12:02:34,860 INFO    : [INFO] Loading external word embedding...
+2024-03-18 12:02:55,096 INFO    : [INFO] External Word Embedding iov count: 48427, oov count: 1573
+2024-03-18 12:02:55,964 INFO    : Namespace(data_dir='../cnndm', cache_dir='../cache/CNNDM', embedding_path='../glove.6B.300d.txt', model='HSG', restore_model='None', save_root='models', log_root='logs', seed=666, gpu='0', cuda=True, vocab_size=50000, n_epochs=20, batch_size=32, n_iter=1, word_embedding=True, word_emb_dim=300, embed_train=False, feat_embed_size=50, n_layers=1, lstm_hidden_state=128, lstm_layers=2, bidirectional=True, n_feature_size=600, hidden_size=300, ffn_inner_hidden_size=512, n_head=6, recurrent_dropout_prob=0.1, atten_dropout_prob=0.1, ffn_dropout_prob=0.1, use_orthnormal_init=True, sent_max_len=100, doc_max_timesteps=50, lr=0.0005, lr_descent=True, grad_clip=True, max_grad_norm=1.0, num_workers=32, m=3)
+2024-03-18 12:02:56,082 INFO    : [MODEL] HeterSumGraph 
+2024-03-18 12:02:56,083 INFO    : [INFO] Start reading ExampleSet
+2024-03-18 12:03:04,467 INFO    : [INFO] Finish reading ExampleSet. Total time is 8.384569, Total size is 287084
+2024-03-18 12:03:04,467 INFO    : [INFO] Loading filter word File ../cache/CNNDM/filter_word.txt
+2024-03-18 12:03:04,690 INFO    : [INFO] Loading word2sent TFIDF file from ../cache/CNNDM/train.w2s.tfidf.jsonl!
+2024-03-18 12:04:51,574 INFO    : [INFO] Start reading ExampleSet
+2024-03-18 12:04:55,817 INFO    : [INFO] Finish reading ExampleSet. Total time is 4.242370, Total size is 13367
+2024-03-18 12:04:55,817 INFO    : [INFO] Loading filter word File ../cache/CNNDM/filter_word.txt
+2024-03-18 12:04:56,062 INFO    : [INFO] Loading word2sent TFIDF file from ../cache/CNNDM/val.w2s.tfidf.jsonl!
+2024-03-18 12:05:07,494 INFO    : [INFO] Use cuda
+2024-03-18 12:05:07,495 INFO    : [INFO] Create new model for training...
+2024-03-18 12:05:07,495 INFO    : [INFO] Starting run_training
+2024-03-18 12:05:47,371 INFO    :        | end of iter   0 | time: 10.69s | train loss 0.1813 | 

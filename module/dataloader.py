@@ -159,7 +159,9 @@ class ExampleSet(torch.utils.data.Dataset):
 
         logger.info("[INFO] Start reading %s", self.__class__.__name__)
         start = time.time()
-        self.example_list = readJson(data_path)
+        with open(data_path, "r", encoding="utf-8") as f:
+            self.example_list = json.load(f)
+        # print( self.example_list)
         logger.info("[INFO] Finish reading %s. Total time is %f, Total size is %d", self.__class__.__name__,
                     time.time() - start, len(self.example_list))
         self.size = len(self.example_list)
@@ -182,12 +184,19 @@ class ExampleSet(torch.utils.data.Dataset):
                 break
 
         logger.info("[INFO] Loading word2sent TFIDF file from %s!" % w2s_path)
-        self.w2s_tfidf = readJson(w2s_path)
+        with open(w2s_path, "r") as f:
+            self.w2s_tfidf = json.load(f)
 
     def get_example(self, index):
-        e = self.example_list[index]
+        # print(self.example_list[str(index)])
+        file_name, new_index  = self.example_list[str(index)]
+        # open the e file and check the summary
+        # with open(file_name, "r", encoding="utf-8") as f:
+        e = readJson(file_name)
+        e = e[new_index]
         e["summary"] = e.setdefault("summary", [])
         example = Example(e["text"], e["summary"], self.vocab, self.sent_max_len, e["label"])
+        
         return example
 
     def pad_label_m(self, label_matrix):
@@ -232,7 +241,7 @@ class ExampleSet(torch.utils.data.Dataset):
             edge:
                 word2sent, sent2word:  tffrac=int, dtype=0
         """
-        G = dgl.DGLGraph()
+        G = dgl.graph(([], []))
         wid2nid, nid2wid = self.AddWordNode(G, input_pad)
         w_nodes = len(nid2wid)
 
@@ -266,6 +275,12 @@ class ExampleSet(torch.utils.data.Dataset):
         G.nodes[sentid2nid].data["label"] = torch.LongTensor(label)  # [N, doc_max]
 
         return G
+    def get_w2s(self,index):
+        index = str(index)
+        file_name, new_index = self.w2s_tfidf[index]
+        ws = readJson(file_name)
+        return ws[new_index]
+    
 
     def __getitem__(self, index):
         """
@@ -277,7 +292,9 @@ class ExampleSet(torch.utils.data.Dataset):
         item = self.get_example(index)
         input_pad = item.enc_sent_input_pad[:self.doc_max_timesteps]
         label = self.pad_label_m(item.label_matrix)
-        w2s_w = self.w2s_tfidf[index]
+        # w2s_w = self.w2s_tfidf[index]
+        w2s_w = self.get_w2s(index)
+        
         G = self.CreateGraph(input_pad, label, w2s_w)
 
         return G, index
@@ -345,7 +362,7 @@ class MultiExampleSet(ExampleSet):
                 sent2doc: dtype=2
         """
         # add word nodes
-        G = dgl.DGLGraph()
+        G = dgl.graph(([], []))
         wid2nid, nid2wid = self.AddWordNode(G, sent_pad)
         w_nodes = len(nid2wid)
 

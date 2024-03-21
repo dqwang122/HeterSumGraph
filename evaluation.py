@@ -84,7 +84,7 @@ def run_test(model, dataset, loader, model_name, hps):
 
         for i, (G, index) in enumerate(loader):
             if hps.cuda:
-                G.to(torch.device("cuda"))
+                G.to(torch.device(0))
             tester.evaluation(G, index, dataset, blocking=hps.blocking)
 
     running_avg_loss = tester.running_avg_loss

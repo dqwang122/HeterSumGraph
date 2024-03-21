@@ -1,0 +1,19 @@
+2024-03-07 23:06:18,345 INFO    : Pytorch 2.1.2+cu121
+2024-03-07 23:06:18,346 INFO    : [INFO] Create Vocab, vocab path is /scratch/jainit/cache/CNNDM/vocab
+2024-03-07 23:06:18,412 INFO    : [INFO] max_size of vocab was specified as 50000; we now have 50000 words. Stopping reading.
+2024-03-07 23:06:18,412 INFO    : [INFO] Finished constructing vocabulary of 50000 total words. Last word added: chaudhary
+2024-03-07 23:06:18,591 INFO    : [INFO] Loading external word embedding...
+2024-03-07 23:06:37,131 INFO    : [INFO] External Word Embedding iov count: 48427, oov count: 1573
+2024-03-07 23:06:37,935 INFO    : Namespace(data_dir='/scratch/jainit/cnndm', cache_dir='/scratch/jainit/cache/CNNDM', embedding_path='/scratch/jainit/glove.6B.300d.txt', model='HSG', restore_model='None', save_root='models', log_root='logs', seed=666, gpu='0', cuda=True, vocab_size=50000, n_epochs=20, batch_size=32, n_iter=1, word_embedding=True, word_emb_dim=300, embed_train=False, feat_embed_size=50, n_layers=1, lstm_hidden_state=128, lstm_layers=2, bidirectional=True, n_feature_size=128, hidden_size=64, ffn_inner_hidden_size=512, n_head=8, recurrent_dropout_prob=0.1, atten_dropout_prob=0.1, ffn_dropout_prob=0.1, use_orthnormal_init=True, sent_max_len=100, doc_max_timesteps=50, lr=0.0005, lr_descent=True, grad_clip=True, max_grad_norm=1.0, m=3)
+2024-03-07 23:06:38,036 INFO    : [MODEL] HeterSumGraph 
+2024-03-07 23:06:38,037 INFO    : [INFO] Start reading ExampleSet
+2024-03-07 23:06:45,035 INFO    : [INFO] Finish reading ExampleSet. Total time is 6.998097, Total size is 287084
+2024-03-07 23:06:45,035 INFO    : [INFO] Loading filter word File /scratch/jainit/cache/CNNDM/filter_word.txt
+2024-03-07 23:06:45,273 INFO    : [INFO] Loading word2sent TFIDF file from /scratch/jainit/cache/CNNDM/train.w2s.tfidf.jsonl!
+2024-03-07 23:08:30,094 INFO    : [INFO] Start reading ExampleSet
+2024-03-07 23:08:30,322 INFO    : [INFO] Finish reading ExampleSet. Total time is 0.227785, Total size is 13367
+2024-03-07 23:08:30,322 INFO    : [INFO] Loading filter word File /scratch/jainit/cache/CNNDM/filter_word.txt
+2024-03-07 23:08:30,548 INFO    : [INFO] Loading word2sent TFIDF file from /scratch/jainit/cache/CNNDM/val.w2s.tfidf.jsonl!
+2024-03-07 23:08:37,672 INFO    : [INFO] Use cuda
+2024-03-07 23:08:37,673 INFO    : [INFO] Create new model for training...
+2024-03-07 23:08:37,673 INFO    : [INFO] Starting run_training

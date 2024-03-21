@@ -108,6 +108,7 @@ class WSGATLayer(nn.Module):
         # print("id in WSGATLayer")
         # print(wnode_id, snode_id, wsedge_id)
         g.nodes[wnode_id].data['z'] = self.fc(srch)
+#        print(dsth.shape)
         g.nodes[snode_id].data['z'] = self.fc(dsth)
         g.apply_edges(self.edge_attention, edges=wsedge_id)
         g.pull(snode_id, self.message_func, self.reduce_func)

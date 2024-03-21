@@ -67,7 +67,7 @@ class HSumGraph(nn.Module):
         # sent -> word
         self.sent2word = WSWGAT(in_dim=hps.hidden_size,
                                 out_dim=embed_size,
-                                num_heads=6,
+                                num_heads=hps.n_head,
                                 attn_drop_out=hps.atten_dropout_prob,
                                 ffn_inner_hidden_size=hps.ffn_inner_hidden_size,
                                 ffn_drop_out=hps.ffn_dropout_prob,

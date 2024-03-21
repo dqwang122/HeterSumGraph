@@ -1,0 +1,115 @@
+2024-03-20 23:54:06,210 INFO    : Pytorch 2.1.2+cu121
+2024-03-20 23:54:06,210 INFO    : [INFO] Create Vocab, vocab path is ../cache/CNNDM/vocab
+2024-03-20 23:54:06,262 INFO    : [INFO] max_size of vocab was specified as 50000; we now have 50000 words. Stopping reading.
+2024-03-20 23:54:06,262 INFO    : [INFO] Finished constructing vocabulary of 50000 total words. Last word added: chaudhary
+2024-03-20 23:54:06,415 INFO    : [INFO] Loading external word embedding...
+2024-03-20 23:54:24,836 INFO    : [INFO] External Word Embedding iov count: 48427, oov count: 1573
+2024-03-20 23:54:25,685 INFO    : Namespace(data_dir='../cnndm', cache_dir='../cache/CNNDM', embedding_path='../glove.6B.300d.txt', model='HSG', restore_model='None', save_root='models', log_root='logs', seed=666, gpu='0', cuda=True, vocab_size=50000, n_epochs=20, batch_size=128, n_iter=1, word_embedding=True, word_emb_dim=300, embed_train=False, feat_embed_size=50, n_layers=1, lstm_hidden_state=128, lstm_layers=2, bidirectional=True, n_feature_size=600, hidden_size=300, ffn_inner_hidden_size=512, n_head=6, recurrent_dropout_prob=0.1, atten_dropout_prob=0.1, ffn_dropout_prob=0.1, use_orthnormal_init=True, sent_max_len=100, doc_max_timesteps=50, lr=0.0005, lr_descent=True, grad_clip=True, max_grad_norm=1.0, num_workers=10, m=3)
+2024-03-20 23:54:25,789 INFO    : [MODEL] HeterSumGraph 
+2024-03-20 23:54:25,789 INFO    : [INFO] Start reading ExampleSet
+2024-03-20 23:54:26,863 INFO    : [INFO] Finish reading ExampleSet. Total time is 1.074061, Total size is 287084
+2024-03-20 23:54:26,864 INFO    : [INFO] Loading filter word File ../cache/CNNDM/filter_word.txt
+2024-03-20 23:54:27,072 INFO    : [INFO] Loading word2sent TFIDF file from ../cache/CNNDM/index_to_file_mapping_train.json!
+2024-03-20 23:54:27,616 INFO    : [INFO] Start reading ExampleSet
+2024-03-20 23:54:27,624 INFO    : [INFO] Finish reading ExampleSet. Total time is 0.006964, Total size is 13367
+2024-03-20 23:54:27,624 INFO    : [INFO] Loading filter word File ../cache/CNNDM/filter_word.txt
+2024-03-20 23:54:27,827 INFO    : [INFO] Loading word2sent TFIDF file from ../cache/CNNDM/index_to_file_mapping_val.json!
+2024-03-20 23:54:33,224 INFO    : [INFO] Use cuda
+2024-03-20 23:54:33,224 INFO    : [INFO] Create new model for training...
+2024-03-20 23:54:33,235 INFO    : [INFO] Starting run_training
+2024-03-20 23:55:47,038 INFO    :        | end of iter   0 | time:  7.01s | train loss 0.1832 | 
+2024-03-21 00:07:00,659 INFO    :        | end of iter 100 | time:  5.03s | train loss 6.8293 | 
+2024-03-21 00:18:17,971 INFO    :        | end of iter 200 | time:  4.83s | train loss 6.0123 | 
+2024-03-21 00:29:47,921 INFO    :        | end of iter 300 | time:  4.85s | train loss 5.8906 | 
+2024-03-21 00:41:15,446 INFO    :        | end of iter 400 | time:  4.87s | train loss 5.8731 | 
+2024-03-21 00:52:44,601 INFO    :        | end of iter 500 | time:  4.84s | train loss 5.8042 | 
+2024-03-21 01:04:21,949 INFO    :        | end of iter 600 | time:  4.98s | train loss 5.8022 | 
+2024-03-21 01:15:50,237 INFO    :        | end of iter 700 | time:  5.07s | train loss 5.7440 | 
+2024-03-21 01:27:10,142 INFO    :        | end of iter 800 | time:  4.90s | train loss 5.7187 | 
+2024-03-21 01:38:48,960 INFO    :        | end of iter 900 | time:  4.89s | train loss 5.7385 | 
+2024-03-21 01:50:09,796 INFO    :        | end of iter 1000 | time:  4.99s | train loss 5.7498 | 
+2024-03-21 02:01:40,929 INFO    :        | end of iter 1100 | time:  5.00s | train loss 5.6977 | 
+2024-03-21 02:12:42,642 INFO    :        | end of iter 1200 | time:  4.91s | train loss 5.7142 | 
+2024-03-21 02:24:13,824 INFO    :        | end of iter 1300 | time:  4.94s | train loss 5.7059 | 
+2024-03-21 02:35:31,313 INFO    :        | end of iter 1400 | time:  4.86s | train loss 5.6905 | 
+2024-03-21 02:46:51,744 INFO    :        | end of iter 1500 | time:  5.02s | train loss 5.6739 | 
+2024-03-21 02:58:33,938 INFO    :        | end of iter 1600 | time:  3.75s | train loss 5.6726 | 
+2024-03-21 03:09:57,553 INFO    :        | end of iter 1700 | time:  4.79s | train loss 5.6532 | 
+2024-03-21 03:21:10,192 INFO    :        | end of iter 1800 | time:  5.15s | train loss 5.6407 | 
+2024-03-21 03:32:52,210 INFO    :        | end of iter 1900 | time:  5.03s | train loss 5.6589 | 
+2024-03-21 03:44:23,887 INFO    :        | end of iter 2000 | time:  4.94s | train loss 5.6496 | 
+2024-03-21 03:55:41,090 INFO    :        | end of iter 2100 | time:  5.07s | train loss 5.6708 | 
+2024-03-21 04:07:09,601 INFO    :        | end of iter 2200 | time:  5.04s | train loss 5.6751 | 
+2024-03-21 04:11:30,519 INFO    : [INFO] The learning rate now is 0.000250
+2024-03-21 04:11:30,520 INFO    :    | end of epoch   1 | time: 15416.23s | epoch train loss 5.7879 | 
+2024-03-21 04:11:30,520 INFO    : [INFO] Found new best model with 5.788 running_train_loss. Saving to models/train/bestmodel
+2024-03-21 04:11:30,654 INFO    : [INFO] Saving model to models/train/bestmodel
+2024-03-21 04:11:30,654 INFO    : [INFO] Starting eval for this model ...
+2024-03-21 04:27:25,859 INFO    : [INFO] End of valid | time: 955.20s | valid loss 5.7359 | 
+2024-03-21 04:27:25,860 INFO    : Rouge1:
+	p:0.416027, r:0.479910, f:0.432834
+Rouge2:
+	p:0.180950, r:0.222410, f:0.191929
+Rougel:
+	p:0.374796, r:0.431777, f:0.389638
+
+2024-03-21 04:27:25,860 INFO    : [INFO] Validset match_true 13607, pred 40101, true 30173, total 402328, match 359268
+2024-03-21 04:27:25,860 INFO    : [INFO] The size of totalset is 13367, sent_number is 402328, accu is 0.892973, precision is 0.339318, recall is 0.450966, F is 0.387256
+2024-03-21 04:27:25,860 INFO    : [INFO] Found new best model with 5.735910 running_avg_loss. The original loss is None, Saving to models/eval/bestmodel_0
+2024-03-21 04:27:25,998 INFO    : [INFO] Found new best model with 0.387256 F. The original F is None, Saving to models/eval/bestFmodel
+2024-03-21 04:28:40,536 INFO    :        | end of iter   0 | time:  4.06s | train loss 0.0543 | 
+2024-03-21 04:40:41,975 INFO    :        | end of iter 100 | time:  4.93s | train loss 5.6226 | 
+2024-03-21 04:52:48,223 INFO    :        | end of iter 200 | time:  4.96s | train loss 5.6228 | 
+2024-03-21 05:04:42,136 INFO    :        | end of iter 300 | time:  5.20s | train loss 5.6179 | 
+2024-03-21 05:16:31,509 INFO    :        | end of iter 400 | time:  4.86s | train loss 5.6057 | 
+2024-03-21 05:28:10,120 INFO    :        | end of iter 500 | time:  5.02s | train loss 5.6008 | 
+2024-03-21 05:39:58,566 INFO    :        | end of iter 600 | time:  4.91s | train loss 5.6140 | 
+2024-03-21 05:52:03,194 INFO    :        | end of iter 700 | time:  4.92s | train loss 5.5911 | 
+2024-03-21 06:03:41,727 INFO    :        | end of iter 800 | time:  5.08s | train loss 5.5671 | 
+2024-03-21 06:15:44,626 INFO    :        | end of iter 900 | time:  4.80s | train loss 5.5743 | 
+2024-03-21 06:27:31,372 INFO    :        | end of iter 1000 | time:  4.94s | train loss 5.6030 | 
+2024-03-21 06:39:29,377 INFO    :        | end of iter 1100 | time:  4.97s | train loss 5.5848 | 
+2024-03-21 06:51:32,386 INFO    :        | end of iter 1200 | time:  5.52s | train loss 5.5690 | 
+2024-03-21 07:03:33,925 INFO    :        | end of iter 1300 | time:  4.84s | train loss 5.5867 | 
+2024-03-21 07:15:30,486 INFO    :        | end of iter 1400 | time:  5.09s | train loss 5.5787 | 
+2024-03-21 07:27:20,862 INFO    :        | end of iter 1500 | time:  5.53s | train loss 5.6136 | 
+2024-03-21 07:39:15,540 INFO    :        | end of iter 1600 | time:  4.88s | train loss 5.5748 | 
+2024-03-21 07:51:12,129 INFO    :        | end of iter 1700 | time:  5.02s | train loss 5.5891 | 
+2024-03-21 08:03:00,133 INFO    :        | end of iter 1800 | time:  4.85s | train loss 5.5929 | 
+2024-03-21 08:14:45,040 INFO    :        | end of iter 1900 | time:  4.97s | train loss 5.5998 | 
+2024-03-21 08:26:53,526 INFO    :        | end of iter 2000 | time:  4.86s | train loss 5.6104 | 
+2024-03-21 08:38:43,773 INFO    :        | end of iter 2100 | time:  5.10s | train loss 5.5694 | 
+2024-03-21 08:50:35,949 INFO    :        | end of iter 2200 | time:  5.14s | train loss 5.5668 | 
+2024-03-21 08:55:23,620 INFO    : [INFO] The learning rate now is 0.000167
+2024-03-21 08:55:23,620 INFO    :    | end of epoch   2 | time: 16077.32s | epoch train loss 5.5931 | 
+2024-03-21 08:55:23,620 INFO    : [INFO] Found new best model with 5.593 running_train_loss. Saving to models/train/bestmodel
+2024-03-21 08:55:23,755 INFO    : [INFO] Saving model to models/train/bestmodel
+2024-03-21 08:55:23,755 INFO    : [INFO] Starting eval for this model ...
+2024-03-21 09:11:08,796 INFO    : [INFO] End of valid | time: 945.04s | valid loss 5.5904 | 
+2024-03-21 09:11:08,796 INFO    : Rouge1:
+	p:0.417907, r:0.484292, f:0.435885
+Rouge2:
+	p:0.183534, r:0.225782, f:0.194802
+Rougel:
+	p:0.377786, r:0.437270, f:0.393752
+
+2024-03-21 09:11:08,796 INFO    : [INFO] Validset match_true 13993, pred 40101, true 30173, total 402328, match 360040
+2024-03-21 09:11:08,796 INFO    : [INFO] The size of totalset is 13367, sent_number is 402328, accu is 0.894892, precision is 0.348944, recall is 0.463759, F is 0.398241
+2024-03-21 09:11:08,796 INFO    : [INFO] Found new best model with 5.590423 running_avg_loss. The original loss is 5.735910, Saving to models/eval/bestmodel_1
+2024-03-21 09:11:08,933 INFO    : [INFO] Found new best model with 0.398241 F. The original F is 0.387256, Saving to models/eval/bestFmodel
+2024-03-21 09:12:23,702 INFO    :        | end of iter   0 | time:  5.15s | train loss 0.0589 | 
+2024-03-21 09:24:53,690 INFO    :        | end of iter 100 | time:  5.09s | train loss 5.5627 | 
+2024-03-21 09:36:51,370 INFO    :        | end of iter 200 | time:  4.89s | train loss 5.5666 | 
+2024-03-21 09:48:42,781 INFO    :        | end of iter 300 | time:  5.11s | train loss 5.5582 | 
+2024-03-21 10:00:53,105 INFO    :        | end of iter 400 | time:  4.92s | train loss 5.5636 | 
+2024-03-21 10:13:02,156 INFO    :        | end of iter 500 | time:  4.85s | train loss 5.5557 | 
+2024-03-21 10:25:00,739 INFO    :        | end of iter 600 | time:  5.02s | train loss 5.5537 | 
+2024-03-21 10:37:01,523 INFO    :        | end of iter 700 | time:  5.49s | train loss 5.5316 | 
+2024-03-21 10:48:55,432 INFO    :        | end of iter 800 | time:  5.15s | train loss 5.5658 | 
+2024-03-21 11:00:48,352 INFO    :        | end of iter 900 | time:  5.11s | train loss 5.5339 | 
+2024-03-21 11:12:57,786 INFO    :        | end of iter 1000 | time:  5.24s | train loss 5.5187 | 
+2024-03-21 11:24:55,311 INFO    :        | end of iter 1100 | time:  5.15s | train loss 5.5553 | 
+2024-03-21 11:36:42,145 INFO    :        | end of iter 1200 | time:  5.19s | train loss 5.5829 | 
+2024-03-21 11:48:41,371 INFO    :        | end of iter 1300 | time:  5.14s | train loss 5.5052 | 
+2024-03-21 12:00:52,944 INFO    :        | end of iter 1400 | time:  4.94s | train loss 5.5066 | 
+2024-03-21 12:12:39,953 INFO    :        | end of iter 1500 | time:  4.85s | train loss 5.5598 | 
