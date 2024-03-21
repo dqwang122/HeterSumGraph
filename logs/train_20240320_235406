@@ -112,3 +112,4 @@ Rougel:
 2024-03-21 11:36:42,145 INFO    :        | end of iter 1200 | time:  5.19s | train loss 5.5829 | 
 2024-03-21 11:48:41,371 INFO    :        | end of iter 1300 | time:  5.14s | train loss 5.5052 | 
 2024-03-21 12:00:52,944 INFO    :        | end of iter 1400 | time:  4.94s | train loss 5.5066 | 
+2024-03-21 12:12:39,953 INFO    :        | end of iter 1500 | time:  4.85s | train loss 5.5598 | 
